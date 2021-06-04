@@ -1,0 +1,3 @@
+requirements:
+
+- socket extension enabled

@@ -2,23 +2,20 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta label="viewport"
+    <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
     <title>Registration</title>
 </head>
 <body>
 <?php
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    echo print_r($_POST);
-    return;
-}
 $form = array(
     "username" => array(
         "label" => "nazwa użytkownika",
         "placeholder" => "nazwa użytkownika",
         "required" => true,
-        "regex" => "{^\P{C}+$}iu",
+        "regex" => "{^\P{C}{3,100}$}iu",
         "type" => "text"
     ),
     "email" => array(
@@ -32,7 +29,7 @@ $form = array(
         "label" => "hasło",
         "placeholder" => "********",
         "required" => true,
-        "regex" => "{^\P{C}+$}iu",
+        "regex" => "{^\P{C}{8,128}$}iu",
         "type" => "password"
     ),
     "name" => array(
@@ -110,15 +107,73 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     require_once "database.php";
     if (isset($bolt)) {
         $bolt->begin();
+        $errors = array();
+        $fields = array();
+        $city = "";
         foreach ($_POST as $name => $value) {
             if (!array_key_exists($name, $form)) {
                 continue;
             }
             if ($form[$name]["required"] && empty($value)) {
                 http_response_code(400);
-                echo "<h1>field " . $name . " is required</h1>";
-                break;
+                array_push($errors, "<h1 class='error'>field " . $name . " is required</h1>");
+                continue;
             }
+            if (!preg_match($form[$name]["regex"], $value)) {
+                http_response_code(400);
+                array_push($errors, "<h1 class='error'>field " . $name . "didn't match the required pattern</h1>");
+                continue;
+            }
+
+            switch ($name) {
+                case "password":
+                    $value = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS);
+                    $fields["password"] = "'" . password_hash($value, PASSWORD_DEFAULT) . "'";
+                    break;
+                case "username":
+                    $value = filter_var($value, FILTER_SANITIZE_STRING);
+                    $bolt->run("OPTIONAL MATCH (u:User { username: '$value' }) RETURN u");
+                    $user = $bolt->pull()[0][0];
+                    if (!is_null($user)) {
+                        http_response_code(409);
+                        array_push($errors, "<h1 class='error'>user " . $value . " already exists</h1>");
+                        break;
+                    }
+                    $fields["username"] = "'" . $value . "'";
+                    break;
+                case "birthdate":
+                    $value = filter_var($value, FILTER_SANITIZE_STRING);
+                    $fields["birthdate"] = "date('$value')";
+                    break;
+                case "email":
+                    $fields["email"] = "'" . filter_var($value, FILTER_SANITIZE_EMAIL) . "'";
+                    break;
+                case "city":
+                    $city = "'" . filter_var($value, FILTER_SANITIZE_STRING) . "'";
+                    break;
+                default:
+                    $fields[$name] = "'" . filter_var($value, FILTER_SANITIZE_STRING) . "'";
+                    break;
+            }
+        }
+        if (count($errors) == 0) {
+
+            try {
+                $userQuery = $bolt->run("MERGE (c:City { name: $city })\n CREATE (u:User { " . implode(", ", array_map(function ($value, $key) {
+                        return "$key: $value";
+                    }, $fields, array_keys($fields))) . "})-[:LIVES_IN]->(c)\n RETURN u");
+                $user = $bolt->pull()[0];
+                $bolt->commit();
+                session_start();
+                $_SESSION["user"] = $user;
+                header("Location: /");
+                exit();
+            } catch (Exception $e) {
+                echo "<h1 class='error'>error insterting data: $e</h1>";
+            }
+
+        } else {
+            echo print_r($errors);
         }
     } else {
         http_response_code(500);
@@ -127,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 }
 ?>
-<form method="post">
+<form class="registration-form" method="post" action="/registration.php">
     <?php
     foreach ($form as $pole => $props) {
         ?>
