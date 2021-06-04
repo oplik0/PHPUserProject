@@ -118,8 +118,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 http_response_code(400);
                 array_push($errors, "<h1 class='error'>field " . $name . " is required</h1>");
                 continue;
-            }
-            if (!preg_match($form[$name]["regex"], $value)) {
+            } elseif (empty($value)) {
+                continue;
+            } elseif (!preg_match($form[$name]["regex"], $value)) {
                 http_response_code(400);
                 array_push($errors, "<h1 class='error'>field " . $name . "didn't match the required pattern</h1>");
                 continue;
@@ -159,10 +160,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         if (count($errors) == 0) {
 
             try {
+                session_destroy();
                 $userQuery = $bolt->run("MERGE (c:City { name: $city })\n CREATE (u:User { " . implode(", ", array_map(function ($value, $key) {
                         return "$key: $value";
                     }, $fields, array_keys($fields))) . "})-[:LIVES_IN]->(c)\n RETURN u");
-                $user = $bolt->pull()[0];
+                $user = $bolt->pull()[0][0]->properties();
                 $bolt->commit();
                 session_start();
                 $_SESSION["user"] = $user;
@@ -182,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 }
 ?>
-<form class="registration-form" method="post" action="/registration.php">
+<form class="user-form" method="post" action="/registration.php">
     <?php
     foreach ($form as $pole => $props) {
         ?>
@@ -198,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         <?php
     }
     ?>
-    <input type="submit" name="submit" value="Wyślij">
+    <input class="submit-button" type="submit" name="submit" value="Wyślij">
 </form>
 </body>
 </html>

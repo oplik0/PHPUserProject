@@ -10,12 +10,13 @@
 </head>
 <body>
 <nav>
-    <a href="registration.php">Stwórz konto</a>
     <?php
+    session_start();
     if (isset($_SESSION["user"])) { ?>
-        <a href="logout.php">Wyloguj się </a>
-    <?php } else { ?><a href="login.php">Zaloguj się</a> <?php } ?>
+        <a class="account-link" href="logout.php">Wyloguj się </a>
+    <?php } else { ?><a class="account-link login-link" href="login.php">Zaloguj się</a>
+        <a class="account-link" href="registration.php">Stwórz konto</a><?php } ?>
 </nav>
-<h1>Witaj <?= $_SESSION["user"]["username"] ?></h1>
+<h1 class="welcome">Witaj <?= isset($_SESSION["user"]) ? $_SESSION["user"]["username"] : "gościu" ?></h1>
 </body>
 </html>

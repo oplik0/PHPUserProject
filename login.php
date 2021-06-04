@@ -16,31 +16,31 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         if (isset($_POST["username"]) && isset($_POST["password"])) {
             $username = $_POST["username"];
             $bolt->run("OPTIONAL MATCH (u:User { username: '$username' } )\n RETURN u.password");
-            $hash = $bolt->pull()[0];
-            if (!is_null($hash) && count($hash) > 0 && password_verify($_POST["password"], $hash)) {
+            $hash = $bolt->pull()[0][0];
+            if (!is_null($hash) && password_verify($_POST["password"], $hash)) {
                 session_start();
-                if ($_POST["remember"]) {
+                if (isset($_POST["remember"]) && $_POST["remember"] == "on") {
                     session_set_cookie_params(2592000);
                 }
                 $bolt->run("MATCH (u:User { username: '$username' })\n RETURN u");
-                $user = $bolt->pull()[0];
+                $user = $bolt->pull()[0][0]->properties();
                 $_SESSION["user"] = $user;
                 header("Location: /");
             } else {
-                echo "<h1 class='error'>Invalid username or password</h1>";
+                echo "<h1 class='error'>Nieprawidłowa nazwa użytkownika lub hasło</h1>";
             }
         }
     }
 }
 ?>
-<form class="login" method="post" action="login.php">
+<form class="user-form" method="post" action="login.php">
     <label for="username">Nazwa użytkownika</label>
     <input name="username" type="text" placeholder="Nazwa użytkownika" pattern="^\P{C}{3,100}$">
     <label for="password">Hasło</label>
     <input name="password" type="password" pattern="^\P{C}{8,128}$">
     <label for="remember">Pamiętaj mnie</label>
     <input name="remember" type="checkbox">
-    <input type="submit" value="Zaloguj się">
+    <input class="submit-button" type="submit" value="Zaloguj się">
 </form>
 </body>
 </html>

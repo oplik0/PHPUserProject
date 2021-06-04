@@ -1,0 +1,136 @@
+/* Base */
+
+*, *:before, *:after {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'liga';
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    outline: 0;
+    background: transparent;
+    border: 0;
+    border-style: solid;
+    color: #ffffff;
+}
+
+body {
+    font-family: Open Sans;
+    display: flex;
+    flex-direction: column;
+    background-color: #020202;
+    align-content: center;
+    justify-content: center;
+    justify-items: center;
+    margin: 0;
+    min-height: 100vh;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+input[type="text"] {
+    width: 100%;
+    display: block;
+}
+
+textarea {
+    resize: none;
+}
+
+input {
+    background-color: #151515;
+}
+
+input::-ms-clear, input::-ms-reveal, select::-ms-expand {
+    display: none;
+}
+
+input[type="radio"] {
+    -webkit-appearance: radio;
+    -moz-appearance: radio;
+    appearance: radio;
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+    -moz-appearance: checkbox;
+    appearance: checkbox;
+}
+
+[placeholder]:empty:before {
+    content: attr(placeholder);
+}
+
+.user-form {
+    justify-self: center;
+    align-self: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: clamp(300px, 700px, 100vw);
+    gap: 0.5rem;
+}
+
+label {
+    text-align: right;
+}
+
+.submit-button {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    text-align: center;
+}
+
+.error {
+    text-align: center;
+    color: darkred;
+}
+
+.welcome {
+    text-align: center;
+    height: 100%;
+    display: block;
+}
+
+nav {
+    width: 100vw;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    gap: 1rem;
+    text-align: right;
+}
+
+.account-link {
+    display: block;
+    width: 100%;
+}
+
+.login-link {
+    text-align: left;
+}
