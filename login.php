@@ -12,19 +12,18 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     require_once "database.php";
-    if (isset($bolt)) {
+    if (isset($db)) {
         if (isset($_POST["username"]) && isset($_POST["password"])) {
-            $username = $_POST["username"];
-            $bolt->run("OPTIONAL MATCH (u:User { username: '$username' } )\n RETURN u.password");
-            $hash = $bolt->pull()[0][0];
-            if (!is_null($hash) && password_verify($_POST["password"], $hash)) {
+            $username = $db->real_escape_string($_POST["username"]);
+            $user_result = $db->query("SELECT COUNT(*) AS `user_count`, `password` FROM `users` WHERE `username`='$username'");
+            $hash = $user_result->fetch_assoc()["password"]
+            if (!is_null($hash) && password_verify($db->real_escape_string($_POST["password"]), $hash)) {
                 session_start();
                 if (isset($_POST["remember"]) && $_POST["remember"] == "on") {
                     session_set_cookie_params(2592000);
                 }
-                $bolt->run("MATCH (u:User { username: '$username' })\n RETURN u");
-                $user = $bolt->pull()[0][0]->properties();
-                $_SESSION["user"] = $user;
+                $user = $db->query("SELECT `username`, `email` FROM `users` WHERE `username`='$username'")
+                $_SESSION["user"] = $usert->fetch_assoc();
                 header("Location: /");
             } else {
                 echo "<h1 class='error'>Nieprawidłowa nazwa użytkownika lub hasło</h1>";

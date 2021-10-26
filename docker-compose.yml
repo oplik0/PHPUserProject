@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/site
+      - ./site.conf:/etc/nginx/templates/default.conf.template
+    depends_on:
+      - php
+      - mysql
+  php:
+    image: php:7-fpm
+    volumes:
+      - .:/site
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+    
