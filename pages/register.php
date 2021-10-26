@@ -19,12 +19,26 @@
             "regex" => "{^\P{C}{3,100}$}iu",
             "type" => "text"
         ),
-        "email" => array(
-            "label" => "email",
-            "placeholder" => "email@domena.com",
+        "name" => array(
+            "label" => "imię",
+            "placeholder" => "Jan",
             "required" => true,
-            "regex" => "{^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$}iu",
-            "type" => "email"
+            "regex" => "{^\P{C}{3,100}$}iu",
+            "type" => "text"
+        ),
+        "lastname" => array(
+            "label" => "nazwisko",
+            "placeholder" => "Kowalski",
+            "required" => true,
+            "regex" => "{^\P{C}{3,100}$}iu",
+            "type" => "text"
+        ),
+        "age" => array(
+            "label" => "wiek",
+            "placeholder" => "18",
+            "required" => true,
+            "regex" => "^(1[4-9]|[2-9][0-9]|1[0-2][0-9])$",
+            "type" => "text"
         ),
         "password" => array(
             "label" => "hasło",
@@ -35,7 +49,7 @@
         )
     );
     ?>
-    <form class="user-form" method="post" action="/registration.php">
+    <form class="user-form" method="post" action="/actions/register.php">
         <?php
         foreach ($form as $pole => $props) {
         ?>

@@ -131,6 +131,14 @@ nav {
     width: 100%;
 }
 
-.login-link {
-    text-align: left;
+main {
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    place-items: center;
+}
+main > a {
+    display: block;
+    text-align: center;
+    background-color: #050505;
 }

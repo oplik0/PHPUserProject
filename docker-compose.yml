@@ -11,12 +11,27 @@ services:
     depends_on:
       - php
       - mysql
+    links:
+      - php
+      - mysql
   php:
     image: php:7-fpm
     volumes:
       - .:/site
+    command:
+      - /bin/sh
+      - -c
+      - |
+          docker-php-ext-install mysqli 
+          echo "extension installed.....starting php-fpm........................................"
+          php-fpm
   mysql:
     image: mysql:latest
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
-    
+      MYSQL_USER: "userDBAdmin"
+      MYSQL_PASSWORD: "Smuggler-Slimness-Tamper-Operating0-Pliable-Mustiness-Tweed"
+      MYSQL_DATABASE: "userDB"
+      MYSQL_ROOT_PASSWORD: "Smuggler-Slimness-Tamper-Operating0-Pliable-Mustiness-Tweed"
+      MYSQL_ROOT_HOST: "*.*.*.*"
+    volumes:
+      - ./users.sql:/docker-entrypoint-initdb.d/users.sql
