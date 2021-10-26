@@ -15,16 +15,9 @@ services:
       - php
       - mysql
   php:
-    image: php:7-fpm
+    image: bitnami/php-fpm:8.0
     volumes:
       - .:/site
-    command:
-      - /bin/sh
-      - -c
-      - |
-          docker-php-ext-install mysqli 
-          echo "extension installed.....starting php-fpm........................................"
-          php-fpm
   mysql:
     image: mysql:latest
     environment:

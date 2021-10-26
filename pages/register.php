@@ -58,7 +58,7 @@
         <?php
         }
         ?>
-        <input class="submit-button" type="submit" name="submit" value="Wyślij">
+        <input class="submit-button" type="submit" name="submit" value="Submit">
     </form>
 </body>
 
