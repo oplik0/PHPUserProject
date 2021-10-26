@@ -14,7 +14,7 @@
     <nav>
         <?php
         if (isset($_SESSION["user"])) { ?>
-            <a class="account-link" href="logout.php">Wyloguj się </a>
+            <a class="account-link" href="/actions/logout.php">Wyloguj się </a>
             <?php } else { ?><?php } ?>
     </nav>
     <main>

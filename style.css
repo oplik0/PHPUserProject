@@ -136,6 +136,7 @@ main {
     align-items: center;
     justify-items: center;
     place-items: center;
+    gap: 2rem;
 }
 main > a {
     display: block;

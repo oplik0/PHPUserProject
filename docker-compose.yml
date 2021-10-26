@@ -7,7 +7,7 @@ services:
       - "8080:80"
     volumes:
       - .:/site
-      - ./site.conf:/etc/nginx/templates/default.conf.template
+      - ./docker-config/site.conf:/etc/nginx/templates/default.conf.template
     depends_on:
       - php
       - mysql
@@ -34,4 +34,4 @@ services:
       MYSQL_ROOT_PASSWORD: "Smuggler-Slimness-Tamper-Operating0-Pliable-Mustiness-Tweed"
       MYSQL_ROOT_HOST: "*.*.*.*"
     volumes:
-      - ./users.sql:/docker-entrypoint-initdb.d/users.sql
+      - ./docker-config/users.sql:/docker-entrypoint-initdb.d/users.sql
